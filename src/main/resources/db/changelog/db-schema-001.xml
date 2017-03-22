@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+
+    <changeSet id="e4cd2a36-6f44-4b1b-a308-0149b32dd71b" author="lvasek">
+        <createTable tableName="accessor">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_accessor"/>
+            </column>
+            <column name="account_id" type="VARCHAR(36)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="surname" type="VARCHAR(255)"/>
+            <column name="user_password" type="VARCHAR(255)"/>
+            <column name="locked" type="java.sql.Types.INTEGER"/>
+            <column name="enabled" type="java.sql.Types.INTEGER"/>
+            <column name="role" type="VARCHAR(20)"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="fc96809a-729e-4c81-9ae4-8568fd558de7" author="lvasek" failOnError="false">
+        <createTable tableName="oauth_client_details">
+            <column name="client_id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_oauth_client_details"/>
+            </column>
+            <column name="resource_ids" type="VARCHAR(255)"/>
+            <column name="client_secret" type="VARCHAR(255)"/>
+            <column name="scope" type="VARCHAR(255)"/>
+            <column name="authorized_grant_types" type="VARCHAR(255)"/>
+            <column name="web_server_redirect_uri" type="VARCHAR(255)"/>
+            <column name="authorities" type="VARCHAR(255)"/>
+            <column name="access_token_validity" type="java.sql.Types.INTEGER"/>
+            <column name="refresh_token_validity" type="java.sql.Types.INTEGER"/>
+            <column name="additional_information" type="VARCHAR(255)"/>
+            <column name="autoapprove" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="987c5d92-58a6-413f-9c7b-ed9571e2ef59" author="lvasek" failOnError="false" dbms="postgresql">
+        <createTable tableName="oauth_client_token">
+            <column name="authentication_id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_oauth_client_token"/>
+            </column>
+            <column name="token_id" type="VARCHAR(255)"/>
+            <column name="token" type="BYTEA"/>
+            <column name="user_name" type="VARCHAR(255)"/>
+            <column name="client_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="f44fbd9b-ed31-4169-a017-51f57f4bcfb0" author="lvasek" failOnError="false" dbms="postgresql">
+        <createTable tableName="oauth_access_token">
+            <column name="authentication_id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_oauth_access_token"/>
+            </column>
+            <column name="token_id" type="VARCHAR(255)"/>
+            <column name="token" type="BYTEA"/>
+            <column name="user_name" type="VARCHAR(255)"/>
+            <column name="client_id" type="VARCHAR(255)"/>
+            <column name="authentication" type="BYTEA"/>
+            <column name="refresh_token" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="b9e0d8d0-e8d5-440d-a485-402b8e4c01e5" author="lvasek" failOnError="false" dbms="postgresql">
+        <createTable tableName="oauth_refresh_token">
+            <column name="token_id" type="VARCHAR(255)"/>
+            <column name="token" type="BYTEA"/>
+            <column name="authentication" type="BYTEA"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="f4e336da-d9ab-4c7d-9641-1b4882f36314" author="lvasek" failOnError=" false" dbms="postgresql">
+        <createTable tableName="oauth_code">
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="authentication" type="BYTEA"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="987c5d92-58a6-413f-9c7b-ed9571e2ef59" author="lvasek" failOnError="false" dbms="oracle,h2">
+        <createTable tableName="oauth_client_token">
+            <column name="authentication_id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_oauth_client_token"/>
+            </column>
+            <column name="token_id" type="VARCHAR(255)"/>
+            <column name="token" type="BLOB"/>
+            <column name="user_name" type="VARCHAR(255)"/>
+            <column name="client_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="f44fbd9b-ed31-4169-a017-51f57f4bcfb0" author="lvasek" failOnError="false" dbms="oracle,h2">
+        <createTable tableName="oauth_access_token">
+            <column name="authentication_id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_oauth_access_token"/>
+            </column>
+            <column name="token_id" type="VARCHAR(255)"/>
+            <column name="token" type="BLOB"/>
+            <column name="user_name" type="VARCHAR(255)"/>
+            <column name="client_id" type="VARCHAR(255)"/>
+            <column name="authentication" type="BLOB"/>
+            <column name="refresh_token" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="b9e0d8d0-e8d5-440d-a485-402b8e4c01e5" author="lvasek" failOnError="false" dbms="oracle,h2">
+        <createTable tableName="oauth_refresh_token">
+            <column name="token_id" type="VARCHAR(255)"/>
+            <column name="token" type="BLOB"/>
+            <column name="authentication" type="BLOB"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="f4e336da-d9ab-4c7d-9641-1b4882f36314" author="lvasek" failOnError=" false" dbms="oracle,h2">
+        <createTable tableName="oauth_code">
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="authentication" type="BLOB"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="e1ae9a53-e019-4b8d-a02f-3c5e89d1e55f" author="lvasek">
+        <createTable tableName="oauth_approvals">
+            <column name="userid" type="VARCHAR(255)"/>
+            <column name="clientid" type="VARCHAR(255)"/>
+            <column name="scope" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(10)"/>
+            <column name="expiresat" type="java.sql.Types.TIMESTAMP"/>
+            <column name="lastmodifiedat" type="java.sql.Types.TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

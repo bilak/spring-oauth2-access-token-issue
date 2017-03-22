@@ -1,0 +1,77 @@
+server:
+  port: 9999
+  context-path: /uaa
+
+spring:
+  application:
+    name: auth-service
+  jackson:
+    serialization:
+      indent_output: true
+      write-dates-as-timestamps: false
+  datasource:
+    url: ${AUTH_SERVICE_DB_URL:jdbc:h2:~/h2db/spring-oauth2-access-token-issue;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+  jpa:
+    show-sql: false
+    database-platform: H2
+    hibernate:
+      ddl-auto: none
+
+logging:
+  level.org.springframework.security.oauth2: DEBUG
+
+
+security:
+  basic:
+    enabled: false
+  oauth2:
+    client:
+      accessTokenUri: http://localhost:9090/uaa/oauth/token
+      userAuthorizationUri: http://localhost:9090/uaa/oauth/authorize
+      client-id: demo
+      client-secret: demo
+    resource:
+      token-info-uri: http://localhost:9090/uaa/oauth/check_token
+      user-info-uri: http://localhost:9090/uaa/users/me
+
+liquibase:
+  change-log: classpath:db/changelog/db-changelog-master.xml
+  enabled: true
+  drop-first: false
+---
+spring:
+  profiles: jpapostgre-dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spring-oauth2-access-token-issue
+    driver-class-name: org.postgresql.Driver
+    username: pguser
+    password: pguser
+  jpa:
+    #database-platform: com.github.bilak.CustomPostgreSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    generate-ddl: false
+    properties:
+      hibernate:
+        default_schema: public
+        format_sql: true
+    show-sql: false
+liquibase:
+  enabled: true
+  drop-first: true
+---
+spring:
+  profiles: jpaoracle-dev
+  datasource:
+    url: jdbc:oracle:thin:@10.0.1.112:1521:xe
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    username: spring
+    password: spring
+  jpa:
+    database-platform: org.hibernate.dialect.Oracle10gDialect
+    generate-ddl: false
+liquibase:
+  enabled: true
+  drop-first: true

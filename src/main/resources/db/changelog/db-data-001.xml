@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="92ae1c2e-67d2-4800-8aad-2be4280d6559" author="lvasek" failOnError="false">
+        <insert tableName="oauth_client_details">
+            <column name="client_id" value="demo"/>
+            <column name="client_secret" value="$2a$10$VNLLGko3C2N0LHHgtKhJPOa2j1i6Mys4dyFexDHWNjY/mejRmqjsG"/> <!-- demo -->
+            <column name="scope" value="read,write"/>
+            <column name="authorized_grant_types" value="password,authorization_code,refresh_token,client_credentials"/>
+            <column name="autoapprove" value=".*"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="deea546c-5b0b-4500-9a81-d3892a2c4b42" author="lvasek">
+        <insert tableName="accessor">
+            <column name="id" value="7aa90f72-12c8-4a2f-88c5-059d54eef970"/>
+            <column name="account_id" value="280d18e2-9bb9-4d63-9557-ea04949d0f65"/>
+            <column name="email" value="jdoe@domain.com"/>
+            <column name="first_name" value="John"/>
+            <column name="surname" value="Doe"/>
+            <column name="user_password" value="$2a$10$hlIX4tLBSGqMxj09.FYaOOpkWvExCyHgPyYtxepLNf8Xbnu.eSPx6"/> <!-- password -->
+            <column name="locked" value="1"/>
+            <column name="enabled" value="0"/>
+            <column name="role" value="USER"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
