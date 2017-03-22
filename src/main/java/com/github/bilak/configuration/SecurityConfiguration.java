@@ -114,8 +114,8 @@ public class SecurityConfiguration {
 
 		@Bean
 		@Primary
-		public AuthorizationServerTokenServices authorizationServerTokenServices() {
-			DefaultTokenServices tokenServices = new DefaultTokenServices();
+		public AuthorizationServerTokenServices defaultAuthorizationServerTokenServices() {
+			DefaultTokenServices tokenServices = new CustomTokenServices();
 			tokenServices.setAuthenticationManager(this.authenticationManager);
 			tokenServices.setTokenStore(tokenStore());
 			tokenServices.setSupportRefreshToken(true);
