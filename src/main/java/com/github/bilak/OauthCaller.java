@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class OauthCaller {
 
 	public static void main(String[] args) {
-		ExecutorService executorService = Executors.newFixedThreadPool(10);
+		ExecutorService executorService = Executors.newFixedThreadPool(20);
 		try {
 			for (int i = 0; i < 20; i++) {
 				executorService.execute(() -> new OauthCaller().callAuth());
@@ -55,11 +55,12 @@ public class OauthCaller {
 			e.printStackTrace();
 		}
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 30; i++) {
 			try {
 				restOperations.exchange(new RequestEntity<>(new LinkedMultiValueMap<>(headers), HttpMethod.POST, builder.build(true).toUri()),
 						Object.class);
 			} catch (HttpStatusCodeException e) {
+				e.printStackTrace();
 				System.out.println("ERROR RESPONSE " + e.getResponseBodyAsString());
 			}
 			try {
