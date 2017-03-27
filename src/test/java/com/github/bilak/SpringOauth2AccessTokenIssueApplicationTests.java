@@ -22,7 +22,7 @@ public class SpringOauth2AccessTokenIssueApplicationTests {
 
 	@Before
 	public void setup() {
-		executorService = Executors.newFixedThreadPool(5);
+		executorService = Executors.newFixedThreadPool(20);
 	}
 
 	@After
@@ -47,7 +47,6 @@ public class SpringOauth2AccessTokenIssueApplicationTests {
 					}, executorService);
 		}
 
-		CompletableFuture.allOf(tasksArray).join();
 		for (CompletableFuture<ResponseEntity<OAuth2AccessToken>> task : tasksArray) {
 			ResponseEntity<OAuth2AccessToken> responseEntity = task.join();
 			assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
