@@ -16,7 +16,7 @@ public class SpringOauth2AccessTokenIssueApplication {
 		SpringApplication.run(SpringOauth2AccessTokenIssueApplication.class, args);
 	}
 
-	@Service
+	//@Service
 	public static class Initializer implements ApplicationListener<ApplicationReadyEvent> {
 
 		@Override
@@ -25,6 +25,7 @@ public class SpringOauth2AccessTokenIssueApplication {
 			try {
 				for (int i = 0; i < 10; i++) {
 					executorService.execute(() -> new OauthCaller().callAuth());
+
 				}
 			} finally {
 				executorService.shutdown();
