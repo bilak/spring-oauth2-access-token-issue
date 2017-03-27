@@ -3,6 +3,8 @@ package com.github.bilak;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestOperations;
@@ -36,7 +38,7 @@ public class OauthCaller {
 		}
 	}
 
-	public void callAuth() {
+	public ResponseEntity<OAuth2AccessToken> callAuth() {
 
 		RestOperations restOperations = new RestTemplate();
 
@@ -55,21 +57,15 @@ public class OauthCaller {
 			e.printStackTrace();
 		}
 
-		for (int i = 0; i < 30; i++) {
-			try {
-				restOperations.exchange(new RequestEntity<>(new LinkedMultiValueMap<>(headers), HttpMethod.POST, builder.build(true).toUri()),
-						Object.class);
-			} catch (HttpStatusCodeException e) {
-				e.printStackTrace();
-				System.out.println("ERROR RESPONSE " + e.getResponseBodyAsString());
-			}
-			try {
-				TimeUnit.MILLISECONDS.sleep(ThreadLocalRandom.current().nextLong(500));
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
+		try {
+			return restOperations.exchange(new RequestEntity<>(new LinkedMultiValueMap<>(headers), HttpMethod.POST, builder.build(true).toUri()),
+					OAuth2AccessToken.class);
+		} catch (HttpStatusCodeException e) {
+			e.printStackTrace();
+			System.out.println("ERROR RESPONSE " + e.getResponseBodyAsString());
 		}
+
+		return null;
 
 	}
 }
