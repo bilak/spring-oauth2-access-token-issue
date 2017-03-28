@@ -1,7 +1,13 @@
 package com.github.bilak.configuration;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.sql.DataSource;
+
 import com.github.bilak.jpa.model.Accessor;
 import com.github.bilak.jpa.repository.AccessorRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,19 +28,18 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.approval.ApprovalStore;
 import org.springframework.security.oauth2.provider.approval.JdbcApprovalStore;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
 import org.springframework.security.oauth2.provider.token.UserAuthenticationConverter;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-
-import javax.sql.DataSource;
-import java.util.Optional;
 
 /**
  * @author lvasek.
@@ -57,25 +62,25 @@ public class SecurityConfiguration {
 				accessorOptional = accessorRepository.findOneById(userIdentifier);
 
 			return accessorOptional
-					.map(a -> new User(
-							a.getEmail(),
-							a.getPassword(),
-							true, true, true, true,
-							AuthorityUtils.createAuthorityList(a.getRole())))
-					.orElseThrow(() -> new UsernameNotFoundException(String.format("User %s was not found", userIdentifier)));
+					.map(a -> new User(a.getEmail(), a.getPassword(), true, true, true,
+							true, AuthorityUtils.createAuthorityList(a.getRole())))
+					.orElseThrow(() -> new UsernameNotFoundException(
+							String.format("User %s was not found", userIdentifier)));
 		};
 	}
 
 	@Configuration
 	@EnableAuthorizationServer
-	public static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
+	public static class AuthorizationServerConfiguration
+			extends AuthorizationServerConfigurerAdapter {
 
 		private DataSource dataSource;
 		private AuthenticationManager authenticationManager;
 		private PasswordEncoder passwordEncoder;
 
 		@Autowired
-		public AuthorizationServerConfiguration(DataSource dataSource, AuthenticationManager authenticationManager,
+		public AuthorizationServerConfiguration(DataSource dataSource,
+				AuthenticationManager authenticationManager,
 				PasswordEncoder passwordEncoder) {
 			this.dataSource = dataSource;
 			this.authenticationManager = authenticationManager;
@@ -84,7 +89,17 @@ public class SecurityConfiguration {
 
 		@Bean
 		protected JdbcTokenStore tokenStore() {
-			return new JdbcTokenStore(this.dataSource);
+			JdbcTokenStore store = new JdbcTokenStore(this.dataSource);
+			store.setAuthenticationKeyGenerator(new DefaultAuthenticationKeyGenerator() {
+				@Override
+				public String extractKey(OAuth2Authentication authentication) {
+					if (authentication == null) {
+						return UUID.randomUUID().toString();
+					}
+					return super.extractKey(authentication);
+				}
+			});
+			return store;
 		}
 
 		@Bean
@@ -100,13 +115,15 @@ public class SecurityConfiguration {
 
 		@Bean
 		ClientDetailsService cloudJdbcClientDetailsService() {
-			JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(this.dataSource);
+			JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(
+					this.dataSource);
 			clientDetailsService.setPasswordEncoder(this.passwordEncoder);
 			return clientDetailsService;
 		}
 
 		@Bean
-		public UserAuthenticationConverter userAuthenticationConverter(UserDetailsService userDetailsService) {
+		public UserAuthenticationConverter userAuthenticationConverter(
+				UserDetailsService userDetailsService) {
 			DefaultUserAuthenticationConverter defaultUserAuthenticationConverter = new DefaultUserAuthenticationConverter();
 			defaultUserAuthenticationConverter.setUserDetailsService(userDetailsService);
 			return defaultUserAuthenticationConverter;
@@ -123,20 +140,18 @@ public class SecurityConfiguration {
 		}
 
 		@Override
-		public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-			security
-					.tokenKeyAccess("permitAll()")
-					.checkTokenAccess("isAuthenticated()")
+		public void configure(AuthorizationServerSecurityConfigurer security)
+				throws Exception {
+			security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()")
 					.passwordEncoder(this.passwordEncoder);
 		}
 
 		@Override
-		public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+		public void configure(AuthorizationServerEndpointsConfigurer endpoints)
+				throws Exception {
 			endpoints.authorizationCodeServices(authorizationCodeServices())
 					.authenticationManager(this.authenticationManager)
-					.tokenStore(tokenStore())
-					.approvalStore(jdbcApprovalStore())
-			;
+					.tokenStore(tokenStore()).approvalStore(jdbcApprovalStore());
 		}
 
 		@Override
@@ -147,14 +162,12 @@ public class SecurityConfiguration {
 
 	@Configuration
 	@EnableResourceServer
-	public static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+	public static class ResourceServerConfiguration
+			extends ResourceServerConfigurerAdapter {
 
 		@Override
 		public void configure(HttpSecurity http) throws Exception {
-			http
-					.antMatcher("/user")
-					.authorizeRequests().anyRequest().authenticated()
-			;
+			http.antMatcher("/user").authorizeRequests().anyRequest().authenticated();
 		}
 	}
 }
