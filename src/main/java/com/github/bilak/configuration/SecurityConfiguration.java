@@ -113,7 +113,6 @@ public class SecurityConfiguration {
 			return new JdbcAuthorizationCodeServices(this.dataSource);
 		}
 
-		@Bean
 		ClientDetailsService cloudJdbcClientDetailsService() {
 			JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(
 					this.dataSource);

@@ -22,7 +22,7 @@ public class CustomTokenServices extends DefaultTokenServices {
 			.getLogger(CustomTokenServices.class);
 
 	@Override
-	@Retryable(exclude = AuthenticationException.class, backoff = @Backoff(multiplier = 1.1, delay = 200))
+	@Retryable(include = Exception.class, exclude = AuthenticationException.class, backoff = @Backoff(multiplier = 1.1, delay = 500))
 	public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication)
 			throws AuthenticationException {
 		try {
