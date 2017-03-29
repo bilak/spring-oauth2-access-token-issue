@@ -45,7 +45,7 @@ liquibase:
 spring:
   profiles: jpapostgre-dev
   datasource:
-    # url: jdbc:postgresql://localhost:5432/spring-oauth2-access-token-issue
+    url: jdbc:postgresql://localhost:5432/spring-oauth2-access-token-issue
     driver-class-name: org.postgresql.Driver
     username: pguser
     password: pguser
