@@ -16,7 +16,6 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -59,16 +58,11 @@ public class OauthCaller {
 			throw new IllegalStateException("Cannot build URL");
 		}
 
-		try {
-			return restOperations.exchange(
-					new RequestEntity<>(new LinkedMultiValueMap<>(headers),
-							HttpMethod.POST, builder.build(true).toUri()),
-					OAuth2AccessToken.class);
-		}
-		catch (HttpStatusCodeException e) {
-			System.out.println("ERROR RESPONSE " + e.getResponseBodyAsString());
-			throw e;
-		}
+		return restOperations
+				.exchange(
+						new RequestEntity<>(new LinkedMultiValueMap<>(headers),
+								HttpMethod.POST, builder.build(true).toUri()),
+						OAuth2AccessToken.class);
 
 	}
 }
