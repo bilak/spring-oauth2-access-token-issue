@@ -22,8 +22,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {
-		SpringOauth2AccessTokenIssueApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = {	SpringOauth2AccessTokenIssueApplication.class },
+		webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+		properties = {"spring.profiles.active=jpapostgre-dev"})
 public class SpringOauth2AccessTokenIssueApplicationTests {
 
 	ExecutorService executorService;
